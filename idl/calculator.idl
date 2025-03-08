@@ -1,0 +1,13 @@
+module calculator {
+    struct Request {
+        string id;
+        string operation;
+        double operand1;
+        double operand2;
+    };
+
+    struct Reply {
+        string id;
+        double result;
+    };
+};
