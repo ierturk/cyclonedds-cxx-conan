@@ -15,7 +15,21 @@ public:
         LoanedSamples<calculator::Reply> samples = reader.take();
         for (const auto& sample : samples) {
             if (sample.info().valid()) {
-                std::cout << "Client received reply: " << sample.data().result() << std::endl;
+                switch (sample.data()._d()) {
+                    case calculator::ReplyType::ADD_REPLY: {
+                        const calculator::AddReply& reply = sample.data().add_reply();
+                        std::cout << "Client received add reply: " << reply.result() << std::endl;
+                        break;
+                    }
+                    case calculator::ReplyType::SUBTRACT_REPLY: {
+                        const calculator::SubtractReply& reply = sample.data().subtract_reply();
+                        std::cout << "Client received subtract reply: " << reply.result() << std::endl;
+                        break;
+                    }
+                    default:
+                        std::cerr << "Unknown reply type" << std::endl;
+                        break;
+                }
             }
         }
     }
@@ -37,20 +51,39 @@ int main() {
     std::string operation;
     double operand1, operand2;
     while (true) {
-        std::cout << "Enter operation (add, subtract, multiply, divide): ";
+        std::cout << "Enter operation (add, subtract) or 'exit' to quit: ";
         std::cin >> operation;
+        if (operation == "exit") {
+            break;
+        }
+        if (operation != "add" && operation != "subtract") {
+            std::cout << "Invalid operation. Please try again." << std::endl;
+            continue;
+        }
         std::cout << "Enter operand1: ";
         std::cin >> operand1;
         std::cout << "Enter operand2: ";
         std::cin >> operand2;
 
         calculator::Request request;
-        request.id("client1");
-        request.operation(operation);
-        request.operand1(operand1);
-        request.operand2(operand2);
-        request_writer.write(request);
-        std::cout << "Client sent request: " << operation << " " << operand1 << " " << operand2 << std::endl;
+        if (operation == "add") {
+            request._d(calculator::RequestType::ADD_REQUEST);
+            calculator::AddRequest add_request;
+            add_request.id("client1");
+            add_request.operand1(operand1);
+            add_request.operand2(operand2);
+            request.add_request(add_request);
+            request_writer.write(request);
+            std::cout << "Client sent add request: " << operand1 << " " << operand2 << std::endl;
+        } else if (operation == "subtract") {
+            calculator::SubtractRequest subtract_request;
+            subtract_request.id("client1");
+            subtract_request.operand1(operand1);
+            subtract_request.operand2(operand2);
+            request.subtract_request(subtract_request);
+            request_writer.write(request);
+            std::cout << "Client sent subtract request: " << operand1 << " " << operand2 << std::endl;
+        }
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }

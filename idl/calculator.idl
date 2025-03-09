@@ -1,13 +1,47 @@
 module calculator {
-    struct Request {
+    enum RequestType {
+        ADD_REQUEST,
+        SUBTRACT_REQUEST
+    };
+
+    enum ReplyType {
+        ADD_REPLY,
+        SUBTRACT_REPLY
+    };
+
+    struct AddRequest {
         string id;
-        string operation;
         double operand1;
         double operand2;
     };
 
-    struct Reply {
+    struct SubtractRequest {
+        string id;
+        double operand1;
+        double operand2;
+    };
+
+    union Request switch (RequestType) {
+        case ADD_REQUEST:
+            AddRequest add_request;
+        case SUBTRACT_REQUEST:
+            SubtractRequest subtract_request;
+    };
+
+    struct AddReply {
         string id;
         double result;
+    };
+
+    struct SubtractReply {
+        string id;
+        double result;
+    };
+
+    union Reply switch (ReplyType) {
+        case ADD_REPLY:
+            AddReply add_reply;
+        case SUBTRACT_REPLY:
+            SubtractReply subtract_reply;
     };
 };

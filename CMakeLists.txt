@@ -2,12 +2,17 @@ cmake_minimum_required(VERSION 3.15)
 project(calculator_project)
 
 # Set C++ standard
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Find Cyclone DDS package
+# Set the build type to Debug
+set(CMAKE_BUILD_TYPE Debug)
+
+
+# Find packages
 find_package(CycloneDDS REQUIRED)
 find_package(CycloneDDS-CXX REQUIRED)
+find_package(flatbuffers REQUIRED)
 
 # Generate C++ files from IDL
 get_filename_component(DLL_PATH ${_idlcxx_shared_lib} DIRECTORY)

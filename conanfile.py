@@ -12,6 +12,7 @@ class CalculatorProjectConan(ConanFile):
     def requirements(self):
         # self.requires("cyclonedds/0.10.4")
         self.requires("cyclonedds-cxx/0.10.4")
+        self.requires("flatbuffers/24.12.23")
 
     def layout(self):
         cmake_layout(self)
